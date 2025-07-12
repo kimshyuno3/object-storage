@@ -17,28 +17,9 @@
 
 3. 코드 제출물 디렉토리 구조
 
-   
-object-storage/
-├── backend/
-│ ├── server.js ← 백엔드 서버 진입점
-│ ├── routes/ ← 라우터 파일 모음
-│ │ ├── auth.js ← 회원가입 및 로그인 라우팅 처리
-│ │ └── files.js ← 파일 업로드, 권한 설정, 다운로드 라우팅 처리
-│ ├── middleware/ ← 미들웨어 함수 저장 폴더
-│ │ └── authMiddleware.js ← JWT 인증 미들웨어 (사용자 인증 처리)
-│ ├── data/ ← 사용자 및 파일 관련 JSON 데이터 저장소
-│ │ ├── users.json ← 사용자 계정 정보
-│ │ └── files.json ← 파일 메타데이터
-│ └── storage/ ← 실제 파일 저장 디렉토리
-│
-├── frontend/
-│ ├── index.html ← 웹 UI
-├── node_modules/ ← 의존성 모듈
-├── package.json ← 프로젝트 의존성 정보
-├── package-lock.json ← 의존성 잠금 파일
-└── .env ← 환경변수 파일
+<img width="590" height="651" alt="image" src="https://github.com/user-attachments/assets/4b14e037-11e0-40a2-8185-87faeb9a300b" />
 
-5. 개발환경 구축, 빌드, 배포
+3. 개발환경 구축, 빌드, 배포
 3.1 개발환경 구축
 3.1.1 Node.js 설치 (버전 18 기준)
 sudo apt update
