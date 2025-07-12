@@ -15,7 +15,7 @@
 또한, 발급된 다운로드 링크는 이미지나 PDF 파일의 경우 <img>, <a> 태그를 통해 바로 웹 페이
 지에서 사용할 수 있도록 HTTP 헤더 설정도 포함시켰다.
 
-3. 코드 제출물 디렉토리 구조
+2. 코드 제출물 디렉토리 구조
 
 <img width="590" height="651" alt="image" src="https://github.com/user-attachments/assets/4b14e037-11e0-40a2-8185-87faeb9a300b" />
 
