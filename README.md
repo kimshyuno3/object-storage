@@ -20,6 +20,7 @@
 <img width="590" height="651" alt="image" src="https://github.com/user-attachments/assets/4b14e037-11e0-40a2-8185-87faeb9a300b" />
 
 3. 개발환경 구축, 빌드, 배포
+
 3.1 개발환경 구축
 3.1.1 Node.js 설치 (버전 18 기준)
 sudo apt update
