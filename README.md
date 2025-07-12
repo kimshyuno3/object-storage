@@ -23,9 +23,13 @@
 
 3.1 개발환경 구축
 3.1.1 Node.js 설치 (버전 18 기준)
+
 sudo apt update
+
 sudo apt install -y curl
+
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
 sudo apt install -y nodejs
 
 3.1.2 프로젝트 폴더 전송
