@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Object Storage 서비스</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #357ABD;
+    }
+    .file-entry {
+      background: #f9f9f9;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #4a90e2;
+    }
+    .hidden {
+      display: none;
+    }
+    .actions {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Object Storage</h1>
+
+    <div id="auth-section">
+      <h2>회원가입</h2>
+      <input id="reg-username" placeholder="Username">
+      <input id="reg-password" type="password" placeholder="Password">
+      <button onclick="register()">회원가입</button>
+
+      <h2>로그인</h2>
+      <input id="login-username" placeholder="Username">
+      <input id="login-password" type="password" placeholder="Password">
+      <button onclick="login()">로그인</button>
+    </div>
+
+    <div id="dashboard" class="hidden">
+      <h2>파일 업로드</h2>
+      <input type="file" id="upload-file">
+      <button onclick="upload()">업로드</button>
+
+      <h2>내 파일 목록</h2>
+      <button onclick="listFiles()">불러오기</button>
+      <div id="file-list"></div>
+      <button onclick="logout()">로그아웃</button>
+    </div>
+  </div>
+
+  <script>
+    let token = '';
+    function authHeaders() {
+      return { 'Authorization': 'Bearer ' + token };
+    }
+
+    async function register() {
+      const username = document.getElementById('reg-username').value;
+      const password = document.getElementById('reg-password').value;
+      const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      alert(data.message || '회원가입 실패');
+    }
+
+    async function login() {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) return alert(data.message || '로그인 실패');
+
+      token = data.token;
+      localStorage.setItem('token', token);
+      showDashboard();
+    }
+
+    function showDashboard() {
+      document.getElementById('auth-section').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+    }
+
+    function logout() {
+      token = '';
+      localStorage.removeItem('token');
+      location.reload();
+    }
+
+    async function upload() {
+      const file = document.getElementById('upload-file').files[0];
+      if (!file) return alert("파일을 선택하세요.");
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/files/upload', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: form
+      });
+      const data = await res.json();
+      if (!res.ok) return alert(data.message || '업로드 실패');
+      alert('업로드 완료: ' + data.link);
+    }
+
+    async function listFiles() {
+      const res = await fetch('/files', { headers: authHeaders() });
+      const files = await res.json();
+      const container = document.getElementById('file-list');
+      container.innerHTML = '';
+      for (const f of files) {
+        const entry = document.createElement('div');
+        entry.className = 'file-entry';
+        entry.innerHTML = `
+          <strong>${f.originalName}</strong><br>
+          크기: ${f.size} bytes<br>
+          업로드 시간: ${new Date(f.uploadTime).toLocaleString()}<br>
+          <div class="actions">
+            <a href="#" onclick="downloadFile('${f.linkId}', 'perm-${f.id}');return false;"> 다운로드</a>
+            <a href="#" onclick="viewMeta('${f.id}');return false;"> 메타데이터</a>
+            <a href="#" onclick="deleteFile('${f.id}');return false;"> 삭제</a>
+          </div>
+          <select id="perm-${f.id}" onchange="togglePasswordInput('${f.id}')">
+            <option value="private" ${f.access.type === 'private' ? 'selected' : ''}>private</option>
+            <option value="public" ${f.access.type === 'public' ? 'selected' : ''}>public</option>
+            <option value="password" ${f.access.type === 'password' ? 'selected' : ''}>password</option>
+          </select>
+          <input id="pass-${f.id}" placeholder="Password" value="${f.access.password || ''}" style="display:none;">
+          <button onclick="setPermission('${f.id}')">권한 설정</button>
+        `;
+        container.appendChild(entry);
+      }
+      files.forEach(f => {
+        if (f.access.type === 'password') togglePasswordInput(f.id);
+      });
+    }
+
+    function togglePasswordInput(id) {
+      const perm = document.getElementById('perm-' + id).value;
+      const input = document.getElementById('pass-' + id);
+      input.style.display = perm === 'password' ? 'inline-block' : 'none';
+    }
+
+    async function viewMeta(id) {
+      const res = await fetch('/files/' + id, { headers: authHeaders() });
+      const data = await res.json();
+      alert(" 메타데이터:\n" + JSON.stringify(data, null, 2));
+    }
+
+    async function setPermission(id) {
+      const type = document.getElementById('perm-' + id).value;
+      const password = document.getElementById('pass-' + id).value;
+
+      const body = type === 'password'
+        ? { type, password }
+        : { type, password: null };
+
+      const res = await fetch('/files/' + id + '/permission', {
+        method: 'PUT',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || '권한 설정 실패');
+      } else {
+        alert(' 권한이 성공적으로 설정되었습니다.');
+      }
+    }
+
+    async function deleteFile(id) {
+      if (!confirm('정말 삭제할까요?')) return;
+      const res = await fetch('/files/' + id, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      const data = await res.json();
+      alert(data.message || '삭제 실패');
+      listFiles();
+    }
+
+    function downloadFile(linkId, selectId) {
+  const type = document.getElementById(selectId).value;
+  const headers = {};
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  if (type === 'password') {
+    const pw = prompt('비밀번호를 입력하세요');
+    if (!pw) return;
+    const url = `/files/download/${linkId}?password=${encodeURIComponent(pw)}`;
+    fetch(url, { headers })
+      .then(res => res.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+      });
+  } else {
+    const url = `/files/download/${linkId}`;
+    fetch(url, { headers })
+      .then(res => res.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+      });
+  }
+}
+
+
+    window.onload = () => {
+      const saved = localStorage.getItem('token');
+      if (saved) {
+        token = saved;
+        showDashboard();
+      }
+    };
+  </script>
+</body>
+</html>

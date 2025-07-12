@@ -1,0 +1,18 @@
+[
+  {
+    "username": "user1",
+    "passwordHash": "$2b$10$Jc/YZ/GpCdbUdlFFmI9dmedzm2038uzQz5is9/kS16Ox9e6sqGT.a"
+  },
+  {
+    "username": "user2",
+    "passwordHash": "$2b$10$O8VzUOwqoZg9FAh5tcCutueYoIVtCgv1/ZNxH8RsacaW/mVrY4IjC"
+  },
+  {
+    "username": "user3",
+    "passwordHash": "$2b$10$bXf9t44i7.2RaSFFtDpnvOw5b2isjzp3jOG0hGMtZDMXZ.pjGH5WG"
+  },
+  {
+    "username": "testuser",
+    "passwordHash": "$2b$10$CrUPXynbecTb33onctjsv.DhqGYPtTEfyTzP7vpzDkGtqz1a/RNzC"
+  }
+]

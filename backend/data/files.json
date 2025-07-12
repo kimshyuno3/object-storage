@@ -1,0 +1,41 @@
+[
+  {
+    "id": "e136ad51-c760-43b6-9db8-3868a120f72d",
+    "filename": "6a54035e-03ad-402b-a619-12338fd4afdf.pdf",
+    "originalName": "java1-lab5 (1).pdf",
+    "owner": "user1",
+    "size": 311140,
+    "uploadTime": "2025-06-07T02:25:16.778Z",
+    "access": {
+      "type": "password",
+      "password": "p"
+    },
+    "linkId": "f201e5cd-6eaf-4c1f-b0ac-5fdec9066307"
+  },
+  {
+    "id": "34c8540b-7403-4f6e-905f-ada9aa1627d0",
+    "filename": "1e409d55-de12-4807-aa3e-57c3cd85c5e6.pdf",
+    "originalName": "file1.pdf",
+    "owner": "user2",
+    "size": 278883,
+    "uploadTime": "2025-06-07T02:33:38.671Z",
+    "access": {
+      "type": "password",
+      "password": "p"
+    },
+    "linkId": "d119e734-6e89-41a5-860d-bcdb87086b8f"
+  },
+  {
+    "id": "39c3419e-baf2-4be7-a15d-99274ae285c0",
+    "filename": "4f9cafa7-dd4d-4d3f-b2d0-7682516840c5.pdf",
+    "originalName": "file1.pdf",
+    "owner": "user1",
+    "size": 278883,
+    "uploadTime": "2025-06-07T17:45:51.275Z",
+    "access": {
+      "type": "private",
+      "password": null
+    },
+    "linkId": "307b1f8b-02ec-4ac0-81f3-6c1557029089"
+  }
+]
